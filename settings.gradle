@@ -1,0 +1,24 @@
+pluginManagement {
+    repositories {
+        google()
+        mavenLocal()
+        mavenCentral()
+        maven { url "https://jitpack.io" }
+        maven { url "https://api.xposed.info/" }
+        maven { url "https://maven.aliucord.com/snapshots" }
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenLocal()
+        mavenCentral()
+        maven { url "https://jitpack.io" }
+        maven { url "https://api.xposed.info/" }
+        maven { url "https://maven.aliucord.com/snapshots" }
+    }
+}
+
+rootProject.name = "CacheCleaner"
+include ':app'

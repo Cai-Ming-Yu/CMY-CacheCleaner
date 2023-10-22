@@ -1,0 +1,68 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'com.google.devtools.ksp'
+    id "org.lsposed.lsparanoid"
+}
+
+lsparanoid {
+    seed = null
+    global = true
+    includeDependencies = true
+    variantFilter = { true }
+}
+
+android {
+    namespace 'Cai_Ming_Yu.CacheCleaner'
+    compileSdk 34
+    buildToolsVersion "34.0.0"
+
+    defaultConfig {
+        applicationId "Cai_Ming_Yu.CacheCleaner"
+        minSdk 21
+        targetSdk 34
+        versionCode 100
+        versionName "Version 1.0.0 (2023.10.21)"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildFeatures {
+        buildConfig = true
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            debuggable false
+            multiDexEnabled true
+            jniDebuggable false
+            zipAlignEnabled true
+            signingConfig signingConfigs.debug
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_20
+        targetCompatibility JavaVersion.VERSION_20
+        encoding "UTF-8"
+    }
+
+    lintOptions {
+        abortOnError false
+        checkReleaseBuilds false
+    }
+
+    kotlinOptions {
+        jvmTarget = '20'
+    }
+}
+
+dependencies {
+    compileOnly 'de.robv.android.xposed:api:82'
+    api 'com.highcapable.yukihookapi:api:1.2.0'
+    ksp 'com.highcapable.yukihookapi:ksp-xposed:1.2.0'
+    api 'androidx.annotation:annotation:1.7.0'
+}
