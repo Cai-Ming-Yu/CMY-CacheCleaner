@@ -1,6 +1,8 @@
 # 彩銘羽 CacheCleaner
 ソフトウェアが起動したら、まずキャッシュをクリアする！
 
+This repo is exactly the same as [this one](https://github.com/Xposed-Modules-Repo/Cai_Ming_Yu.CacheCleaner).
+
 Use Xposed to clear the software's cache data when it starts.
 
 ## Env
