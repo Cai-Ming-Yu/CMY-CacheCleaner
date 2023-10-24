@@ -15,4 +15,6 @@ If you are not packaging into other software using a tool like LSPatch, enable t
 
 You can also build the software yourself by downloading the source code for this project(Software builds via e.g. "./gradlew assembleRelease").
 
+Debug CI Version: https://github.com/Cai-Ming-Yu/CMY-CacheCleaner/actions
+
 ## [License](https://github.com/Cai-Ming-Yu/Cai_Ming_Yu.CacheCleaner/blob/C-M-Y/LICENSE)
