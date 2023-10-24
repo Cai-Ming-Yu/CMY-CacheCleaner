@@ -1,0 +1,29 @@
+name: CI Build
+
+on:
+  push:
+    branches: [ "C-M-Y" ]
+  pull_request:
+    branches: [ "C-M-Y" ]
+  workflow_dispatch:
+
+jobs:
+  try_to_build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: '20'
+          distribution: 'oracle'
+      - name: Build CI Version
+        run: chmod 0777 ./gradlew && ./gradlew app:assembleRelease
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: CacheCleaner-Debug-CI.APK
+          path: app/build/outputs/apk/release/app-release.apk
