@@ -14,7 +14,6 @@ buildscript {
         classpath 'org.lsposed.lsparanoid:gradle-plugin:0.5.2'
     }
 }
-
 plugins {
     id 'com.android.application' version '8.3.0-alpha09' apply false
     id 'org.jetbrains.kotlin.android' version '1.9.20-RC' apply false

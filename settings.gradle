@@ -19,6 +19,5 @@ dependencyResolutionManagement {
         maven { url "https://maven.aliucord.com/snapshots" }
     }
 }
-
 rootProject.name = "CacheCleaner"
 include ':app'

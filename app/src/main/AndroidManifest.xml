@@ -1,27 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:tools="http://schemas.android.com/tools"
->
-
+          xmlns:tools="http://schemas.android.com/tools">
     <application
-            tools:targetApi="34"
-            android:label="CacheCleaner"
             android:icon="@mipmap/icon"
-    >
+            android:label="CacheCleaner"
+            tools:targetApi="34">
         <meta-data
                 android:name="xposedmodule"
-                android:value="true" />
-
+                android:value="true"/>
         <meta-data
                 android:name="xposeddescription"
-                android:value="ソフトウェアが起動したら、まずキャッシュをクリアする！|When the software starts, clear the cache first!" />
-
+                android:value="ソフトウェアが起動したら、まずキャッシュをクリアする！|When the software starts, clear the cache first!"/>
         <meta-data
                 android:name="xposedminversion"
-                android:value="93" />
-
+                android:value="93"/>
         <meta-data
                 android:name="xposedsharedprefs"
                 android:value="true"/>
-</application>
+        <meta-data
+                android:name="xposedscope"
+                android:resource="@array/CacheCleaner" />
+    </application>
 </manifest>
