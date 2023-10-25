@@ -30,20 +30,3 @@ jobs:
         with:
           name: CacheCleaner-Debug-CI.APK
           path: app/build/outputs/apk/release/app-release.apk
-      - name: Clone MFPAF/dl Repository
-        uses: actions/checkout@v3
-        with:
-          repository: MFPAF/dl
-          path: dl
-      - name: Move Artifact to dl Repository
-        run: mv app/build/outputs/apk/release/app-release.apk dl/CacheCleaner/Latest-Nightly.APK
-      - name: Commit and Push Changes
-        env:
-          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-        run: |
-          cd dl
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add .
-          git commit -m "CacheCleaner Nightly Debug CI Version Build"
-          git push
