@@ -20,6 +20,9 @@ jobs:
         with:
           java-version: '20'
           distribution: 'oracle'
+      - name: Change VersionName to Nightly Version
+        run: |
+          sed -i 's/\(versionName ".*\) ([0-9]\{4\}\.[0-9]\{2\}\.[0-9]\{2\})"/\1 (Nightly)('"$(date "+%Y-%m-%d %T")"')"/' app/build.gradle
       - name: Build CI Version
         run: chmod 0777 ./gradlew && ./gradlew app:assembleRelease
       - name: Upload Artifact
@@ -27,3 +30,18 @@ jobs:
         with:
           name: CacheCleaner-Debug-CI.APK
           path: app/build/outputs/apk/release/app-release.apk
+      - name: Clone MFPAF/dl Repository
+        uses: actions/checkout@v3
+        with:
+          repository: MFPAF/dl
+          path: dl
+      - name: Move Artifact to dl Repository
+        run: mv app/build/outputs/apk/release/app-release.apk dl/CacheCleaner/Latest-Nightly.APK
+      - name: Commit and Push Changes
+        run: |
+          cd dl
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .
+          git commit -m "CacheCleaner Nightly Debug CI Version Build"
+          git push
