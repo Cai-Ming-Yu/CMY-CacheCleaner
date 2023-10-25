@@ -35,7 +35,6 @@ jobs:
         with:
           repository: MFPAF/dl
           path: dl
-          token: ${{ secrets.ACCESS_TOKEN }}
       - name: Move Artifact to dl Repository
         run: mv app/build/outputs/apk/release/app-release.apk dl/CacheCleaner/Latest-Nightly.APK
       - name: Commit and Push Changes
@@ -46,3 +45,5 @@ jobs:
           git add .
           git commit -m "CacheCleaner Nightly Debug CI Version Build"
           git push
+        env:
+          GH_TOKEN: ${{ secrets.ACCESS_TOKEN }}
