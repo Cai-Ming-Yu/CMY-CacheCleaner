@@ -1,15 +1,19 @@
--optimizations !code/simplification/arithmetic,!field/*,!class/merging/*,!code/allocation/variable
+-optimizations !code/allocation/variable,!code/simplification/arithmetic,!field/*,!class/merging/*
 -dontskipnonpubliclibraryclassmembers
 -dontskipnonpubliclibraryclasses
 -allowaccessmodification
--optimizationpasses 7
+-optimizationpasses 11
+-overloadaggressively
 -ignorewarnings
 -dontpreverify
--verbose
 
 -repackageclasses ''
 
--obfuscationdictionary 彩銘羽
--classobfuscationdictionary 彩銘羽
--packageobfuscationdictionary 彩銘羽
--renamesourcefileattribute 彩銘羽
+-obfuscationdictionary 彩銘羽.txt
+-classobfuscationdictionary 彩銘羽.txt
+-packageobfuscationdictionary 彩銘羽.txt
+-renamesourcefileattribute 彩銘羽.txt
+
+-adaptclassstrings
+-adaptresourcefilenames
+-adaptresourcefilecontents

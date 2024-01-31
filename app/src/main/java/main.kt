@@ -1,35 +1,18 @@
-package CacheCleaner
+package tokyo.caimingyu.cachecleaner
 
-import Cai_Ming_Yu.CacheCleaner.*
-import java.io.File
-import android.app.KeyguardManager
+import Cai_Ming_Yu.CacheCleaner.BuildConfig
 import android.content.Context
-import android.content.pm.PackageManager
-import de.robv.android.xposed.XC_MethodHook
-import de.robv.android.xposed.XposedHelpers
-import de.robv.android.xposed.callbacks.XC_LoadPackage
-import com.highcapable.yukihookapi.hook.entity.YukiBaseHooker
-import com.highcapable.yukihookapi.hook.xposed.bridge.event.YukiXposedEvent
 import com.highcapable.yukihookapi.annotation.xposed.InjectYukiHookWithXposed
 import com.highcapable.yukihookapi.hook.factory.configs
-import com.highcapable.yukihookapi.hook.factory.encase
+import com.highcapable.yukihookapi.hook.xposed.bridge.event.YukiXposedEvent
 import com.highcapable.yukihookapi.hook.xposed.proxy.IYukiHookXposedInit
-import com.highcapable.yukihookapi.hook.xposed.application.ModuleApplication
+import de.robv.android.xposed.XposedHelpers
+import java.io.File
 
 @InjectYukiHookWithXposed
-object Hook : IYukiHookXposedInit {
+object main : IYukiHookXposedInit {
     override fun onInit() = configs {
-        debugLog {
-            tag = "CacheCleaner"
-            isEnable = false
-            isRecord = false
-            elements(TAG, PRIORITY, PACKAGE_NAME, USER_ID)
-        }
         isDebug = BuildConfig.DEBUG
-        isEnableModuleAppResourcesCache = true
-        isEnableHookModuleStatus = true
-        isEnableHookSharedPreferences = true
-        isEnableDataChannel = true
     }
 
     override fun onHook() {}
@@ -41,8 +24,8 @@ object Hook : IYukiHookXposedInit {
                     XposedHelpers.findClass("android.app.ActivityThread", null), "currentApplication"
                 ) as? Context
                 context?.let { nonNullContext ->
-                    if (it.packageName == "com.netease.cloudmusic") {
-                        Music163(nonNullContext)
+                    when (it.packageName) {
+                        "com.netease.cloudmusic" -> Music163(nonNullContext)
                     }
                     CacheCleaner(nonNullContext)
                 }
@@ -67,12 +50,10 @@ object Hook : IYukiHookXposedInit {
 
         for (SdcardCache in SdcardCaches) {
             val SdcardCacheDir = File(Sdcard, SdcardCache)
-            if (SdcardCacheDir.exists() && SdcardCacheDir.isDirectory) {
-                DelCaches(SdcardCacheDir)
-            }
+            DelCaches(SdcardCacheDir)
         }
 
-        val AndroidDataFile = context.getExternalFilesDir(null)?.getAbsolutePath()
+        val AndroidDataFile = context.getExternalFilesDir(null)?.absolutePath
 
         val AndroidDataFileCaches = listOf(
             "Download", "nblog", "nCrash", "xcrash"
@@ -80,9 +61,7 @@ object Hook : IYukiHookXposedInit {
 
         for (AndroidDataFileCache in AndroidDataFileCaches) {
             val AndroidDataFileCacheDir = File(AndroidDataFile, AndroidDataFileCache)
-            if (AndroidDataFileCacheDir.exists() && AndroidDataFileCacheDir.isDirectory) {
-                DelCaches(AndroidDataFileCacheDir)
-            }
+            DelCaches(AndroidDataFileCacheDir)
         }
 
         val Data = context.getDir("data", Context.MODE_PRIVATE)
@@ -94,35 +73,27 @@ object Hook : IYukiHookXposedInit {
 
         for (DataFileCache in DataFileCaches) {
             val DataFileCacheDir = File(DataFile, DataFileCache)
-            if (DataFileCacheDir.exists() && DataFileCacheDir.isDirectory) {
-                DelCaches(DataFileCacheDir)
-            }
+            DelCaches(DataFileCacheDir)
         }
     }
 
     private fun CacheCleaner(context: Context) {
         val AndroidCacheDir = context.externalCacheDir
-        if (AndroidCacheDir != null && AndroidCacheDir.exists()) {
-            DelCaches(AndroidCacheDir)
-        }
+        DelCaches(AndroidCacheDir)
 
         val CacheDir = context.cacheDir
-        if (CacheDir != null && CacheDir.exists()) {
-            DelCaches(CacheDir)
-        }
+        DelCaches(CacheDir)
 
         val CodeCacheDir = context.codeCacheDir
-        if (CodeCacheDir != null && CodeCacheDir.exists()) {
-            DelCaches(CodeCacheDir)
-        }
+        DelCaches(CodeCacheDir)
 
         context.externalCacheDir?.mkdirs()
         context.cacheDir?.mkdirs()
         context.codeCacheDir?.mkdirs()
     }
 
-    private fun DelCaches(CacheDir: File) {
-        if (CacheDir.exists() && CacheDir.isDirectory) {
+    private fun DelCaches(CacheDir: File?) {
+        if (CacheDir != null && CacheDir.exists() && CacheDir.isDirectory) {
             CacheDir.deleteRecursively()
         }
     }

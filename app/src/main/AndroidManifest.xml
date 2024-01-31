@@ -17,8 +17,8 @@
         <meta-data
                 android:name="xposedsharedprefs"
                 android:value="true"/>
-        <meta-data
+        <!--<meta-data
                 android:name="xposedscope"
-                android:resource="@array/CacheCleaner" />
+                android:resource="@array/CacheCleaner" />-->
     </application>
 </manifest>
