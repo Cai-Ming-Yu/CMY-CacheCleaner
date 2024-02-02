@@ -23,8 +23,8 @@ android {
         applicationId "Cai_Ming_Yu.CacheCleaner"
         minSdk 21
         targetSdk 34
-        versionCode 111
-        versionName "Version 1.1.1 (2024.01.31)"
+        versionCode 120
+        versionName "Version 1.2.0 (2024.02.02)"
     }
     buildTypes.release {
         minifyEnabled true
@@ -47,7 +47,7 @@ android {
 BlackObfuscator {
     enabled true
     depth 3
-    obfClass = ["Cai_Ming_Yu.CacheCleaner", "tokyo.caimingyu.cachecleaner"]
+    obfClass = ["tokyo.caimingyu.cachecleaner.Server"]
     blackClass = []
 }
 dependencies {

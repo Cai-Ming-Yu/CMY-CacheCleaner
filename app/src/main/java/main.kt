@@ -7,94 +7,91 @@ import com.highcapable.yukihookapi.hook.factory.configs
 import com.highcapable.yukihookapi.hook.xposed.bridge.event.YukiXposedEvent
 import com.highcapable.yukihookapi.hook.xposed.proxy.IYukiHookXposedInit
 import de.robv.android.xposed.XposedHelpers
+import de.robv.android.xposed.callbacks.XC_LoadPackage
 import java.io.File
 
-@InjectYukiHookWithXposed
-object main : IYukiHookXposedInit {
-    override fun onInit() = configs {
-        isDebug = BuildConfig.DEBUG
+class Server {
+
+    companion object {
+        fun doHook(it: XC_LoadPackage.LoadPackageParam) {
+            val context = XposedHelpers.callStaticMethod(
+                XposedHelpers.findClass("android.app.ActivityThread", null), "currentApplication"
+            ) as? Context
+            context?.let { nonNullContext ->
+                cacheCleaner(nonNullContext)
+                when (it.packageName) {
+                    "com.netease.cloudmusic" -> music163(nonNullContext)
+                    else -> {}
+                }
+            }
+        }
+
+        private fun music163(context: Context) {
+            val sdcard = XposedHelpers.callStaticMethod(
+                XposedHelpers.findClass("android.os.Environment", null), "getExternalStorageDirectory"
+            ) as File
+
+            val sdcardCaches = listOf(
+                "netease/cloudmusic/Cache/ImageCache",
+                "netease/cloudmusic/Cache/MLog",
+                "netease/cloudmusic/Cache/NewApk",
+                "netease/cloudmusic/Cache/ShareResCache",
+                "netease/cloudmusic/Cache/ShortVideo",
+                "netease/cloudmusic/Cache/VideoCache",
+                "netease/cloudmusic/Cache/UpgradeTemp"
+            )
+
+            for (sdcardCache in sdcardCaches) {
+                val sdcardCacheDir = File(sdcard, sdcardCache)
+                delCaches(sdcardCacheDir)
+            }
+
+            val androidDataFile = context.getExternalFilesDir(null)?.absolutePath
+
+            val androidDataFileCaches = listOf(
+                "Download", "nblog", "nCrash", "xcrash"
+            )
+
+            for (androidDataFileCache in androidDataFileCaches) {
+                val androidDataFileCacheDir = File(androidDataFile, androidDataFileCache)
+                delCaches(androidDataFileCacheDir)
+            }
+
+            val data = context.getDir("data", Context.MODE_PRIVATE)
+            val dataFile = File(data, "files")
+
+            val dataFileCaches = listOf(
+                "bundle/cache", "urs_sdk_log", "encryptStatistic/cache", "NetworkCache"
+            )
+
+            for (dataFileCache in dataFileCaches) {
+                val dataFileCacheDir = File(dataFile, dataFileCache)
+                delCaches(dataFileCacheDir)
+            }
+        }
+
+        private fun cacheCleaner(context: Context) {
+            delCaches(context.externalCacheDir)
+            delCaches(context.cacheDir)
+            delCaches(context.codeCacheDir)
+        }
+
+        private fun delCaches(cacheDir: File?) {
+            if (cacheDir != null && cacheDir.exists() && cacheDir.isDirectory) {
+                cacheDir.deleteRecursively()
+                cacheDir.mkdirs()
+            }
+        }
     }
+}
+
+@InjectYukiHookWithXposed
+object Main : IYukiHookXposedInit {
+    override fun onInit() = configs { isDebug = BuildConfig.DEBUG }
 
     override fun onHook() {}
 
     override fun onXposedEvent() {
-        YukiXposedEvent.events {
-            onHandleLoadPackage {
-                val context = XposedHelpers.callStaticMethod(
-                    XposedHelpers.findClass("android.app.ActivityThread", null), "currentApplication"
-                ) as? Context
-                context?.let { nonNullContext ->
-                    when (it.packageName) {
-                        "com.netease.cloudmusic" -> Music163(nonNullContext)
-                    }
-                    CacheCleaner(nonNullContext)
-                }
-            }
-        }
-    }
-
-    private fun Music163(context: Context) {
-        val Sdcard = XposedHelpers.callStaticMethod(
-            XposedHelpers.findClass("android.os.Environment", null), "getExternalStorageDirectory"
-        ) as File
-
-        val SdcardCaches = listOf(
-            "netease/cloudmusic/Cache/ImageCache",
-            "netease/cloudmusic/Cache/MLog",
-            "netease/cloudmusic/Cache/NewApk",
-            "netease/cloudmusic/Cache/ShareResCache",
-            "netease/cloudmusic/Cache/ShortVideo",
-            "netease/cloudmusic/Cache/VideoCache",
-            "netease/cloudmusic/Cache/UpgradeTemp"
-        )
-
-        for (SdcardCache in SdcardCaches) {
-            val SdcardCacheDir = File(Sdcard, SdcardCache)
-            DelCaches(SdcardCacheDir)
-        }
-
-        val AndroidDataFile = context.getExternalFilesDir(null)?.absolutePath
-
-        val AndroidDataFileCaches = listOf(
-            "Download", "nblog", "nCrash", "xcrash"
-        )
-
-        for (AndroidDataFileCache in AndroidDataFileCaches) {
-            val AndroidDataFileCacheDir = File(AndroidDataFile, AndroidDataFileCache)
-            DelCaches(AndroidDataFileCacheDir)
-        }
-
-        val Data = context.getDir("data", Context.MODE_PRIVATE)
-        val DataFile = File(Data, "files")
-
-        val DataFileCaches = listOf(
-            "bundle/cache", "urs_sdk_log", "encryptStatistic/cache", "NetworkCache"
-        )
-
-        for (DataFileCache in DataFileCaches) {
-            val DataFileCacheDir = File(DataFile, DataFileCache)
-            DelCaches(DataFileCacheDir)
-        }
-    }
-
-    private fun CacheCleaner(context: Context) {
-        val AndroidCacheDir = context.externalCacheDir
-        DelCaches(AndroidCacheDir)
-
-        val CacheDir = context.cacheDir
-        DelCaches(CacheDir)
-
-        val CodeCacheDir = context.codeCacheDir
-        DelCaches(CodeCacheDir)
-
-        context.externalCacheDir?.mkdirs()
-        context.cacheDir?.mkdirs()
-        context.codeCacheDir?.mkdirs()
-    }
-
-    private fun DelCaches(CacheDir: File?) {
-        if (CacheDir != null && CacheDir.exists() && CacheDir.isDirectory) {
-            CacheDir.deleteRecursively()
-        }
+        YukiXposedEvent.events { onHandleLoadPackage { Server.doHook(it) } }
     }
 }
