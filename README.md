@@ -13,7 +13,7 @@ Install the latest version of the Xposed module released [here](https://github.c
 
 If you are not packaging into other software using a tool like LSPatch, enable this module in an Xposed framework like LSPosed and select the required software.
 
-You can also build the software yourself by downloading the source code for this project(Software builds via e.g. "./gradlew assembleRelease").
+You can also build the software yourself by downloading the source code for this project(Software builds via e.g. ```./gradlew assembleRelease```).
 
 Debug CI Version: https://github.com/Cai-Ming-Yu/CMY-CacheCleaner/actions
 
