@@ -24,7 +24,7 @@ jobs:
         run: |
           sed -i 's/\(versionName ".*\) ([0-9]\{4\}\.[0-9]\{2\}\.[0-9]\{2\})"/\1 (Nightly)('"$(date "+%Y-%m-%d %T")"')"/' app/build.gradle
       - name: Build CI Version
-        run: chmod 0777 ./gradlew && ./gradlew app:assembleRelease
+        run: chmod 0777 ./gradlew && ./gradlew assembleRelease
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
