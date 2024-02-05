@@ -10,7 +10,7 @@
                 android:value="true"/>
         <meta-data
                 android:name="xposeddescription"
-                android:value="ソフトウェアが起動したら、まずキャッシュをクリアする！|When the software starts, clear the cache first!"/>
+                android:value="アプリの起動時にキャッシュをクリアするよ！|When the software starts, clear the cache first!"/>
         <meta-data
                 android:name="xposedminversion"
                 android:value="93"/>
