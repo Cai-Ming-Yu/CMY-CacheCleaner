@@ -24,7 +24,7 @@ LSPatchのようなツールを使って他のアプリに埋め込んでいな�
 
 You can also build the software yourself by downloading the source code for this project(Software builds via e.g. ```./gradlew assembleRelease```).
 
-このプロジェクトのソースコードをダウンロードして、自分自身でアプリをビルドする事もできます。(アプリのビルドは、``./gradlew assembleRelease`` などで行います)
+このプロジェクトのソースコードをダウンロードして、自分自身でアプリをビルドする事もできます。(アプリのビルドは、```./gradlew assembleRelease``` などで行います)
 
 Debug CI Version: https://github.com/Cai-Ming-Yu/CMY-CacheCleaner/actions
 
