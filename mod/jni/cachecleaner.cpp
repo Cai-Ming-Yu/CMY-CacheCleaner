@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
 
     string configFile = argv[1];
 
-    string logPath = fs::canonical(fs::absolute(fs::path(argv[0])).parent_path()).string() + "/runtimeLog.txt";
+    string logPath = fs::canonical(fs::absolute(fs::path(argv[1])).parent_path()).string() + "/runtimeLog.txt";
     Logger::Create(Logger::LogLevel::INFO, logPath);
     CLOGI((string("Created log file: ") + logPath).c_str());
 
