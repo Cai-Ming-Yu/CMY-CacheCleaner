@@ -40,7 +40,7 @@ void rmDir(const string &dir)
     if (fs::exists(dir) && fs::is_directory(dir))
     {
         fs::remove_all(dir);
-        fs::create_directories(dir);
+        //fs::create_directories(dir);
     }
 }
 
@@ -234,7 +234,7 @@ signed main(int argc, char *argv[])
                 apps = "";
                 break;
             }
-            if (apps != "")
+            if (apps != "" && apps != "\n")
             {
                 istringstream iss(apps);
                 string packageName;
