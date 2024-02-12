@@ -40,7 +40,6 @@ verifyFile() {
 }
 
 [[ "$('pgrep' 'CacheCleaner')" != '' ]] && {
-    'killall' '-9' 'CacheCleaner'
     'sh' "${MODPATH}/service.sh" &
     'ui_print' "- Cache Cleaner has been restarted"
 } || {
