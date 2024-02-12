@@ -7,6 +7,11 @@ modDir="$('dirname' "$('readlink' '-f' "${0}")")"
     'cp' '-rf' "${modDir}/config.yaml" "/data/adb/C-M-Y/CacheCleaner/config.yaml"
 }
 
+while [[ ! -f '/sdcard/.CacheCleaner' ]]; do
+    'true' >'/sdcard/.CacheCleaner'
+    'sleep' '1'
+done
+
 [[ "$('pidof' 'CacheCleaner')" != '' ]] && 'killall' '-9' 'CacheCleaner'
 
 'chmod' '0777' "${modDir}/CacheCleaner"
