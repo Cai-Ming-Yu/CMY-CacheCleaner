@@ -11,6 +11,7 @@ while [[ $('getprop' 'sys.boot_completed') != '1' || ! -f '/sdcard/.CacheCleaner
     'true' >'/sdcard/.CacheCleaner'
     'sleep' '1'
 done
+'sleep' '60'
 
 [[ "$('pidof' 'CacheCleaner')" != '' ]] && 'killall' '-9' 'CacheCleaner'
 
