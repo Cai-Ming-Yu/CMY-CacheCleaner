@@ -39,8 +39,10 @@ void rmDir(const string &dir)
 {
     if (fs::exists(dir) && fs::is_directory(dir))
     {
-        fs::remove_all(dir);
-        //fs::create_directories(dir);
+        for (const auto &path : fs::directory_iterator(dir))
+        {
+            fs::remove_all(path.path());
+        }
     }
 }
 
