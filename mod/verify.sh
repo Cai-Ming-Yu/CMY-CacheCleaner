@@ -1,7 +1,7 @@
 #!/bin/sh
 
 fileDir="$(dirname "$(readlink -f "${0}")")"
-modDir="${fileDir}/source"
+modDir="${fileDir}/build"
 verifyFile="${modDir}/files.conf"
 echo -n '' >"${verifyFile}"
 

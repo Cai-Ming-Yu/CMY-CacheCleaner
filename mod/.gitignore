@@ -1,3 +1,6 @@
 
 /libs/
 /obj/
+/build/
+/encrypt.sh
+/CacheCleaner-Mod.zip
