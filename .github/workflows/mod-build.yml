@@ -1,0 +1,32 @@
+name: Mod Build
+
+on:
+  push:
+    branches: [ "C-M-Y" ]
+  pull_request:
+    branches: [ "C-M-Y" ]
+  workflow_dispatch:
+
+jobs:
+  try_to_build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Setup Android NDK
+        uses: nttld/setup-ndk@v1
+        with:
+            ndk-version: r26b
+      - name: Change VersionName to Nightly Version
+        run: sed -i 's/\(versionCode=".*\) ([0-9]\{4\}\.[0-9]\{2\}\.[0-9]\{2\})"/\1 (Nightly)('"$(date "+%Y-%m-%d %T")"')"/' mod/source/module.prop
+      - name: Build Mod
+        run: |
+          cd mod/jni ; ndk-build ; cd ../ ; mv libs/arm64-v8a libs/arm64 ; mv libs/armeabi-v7a libs/arm ; mv libs/x86_64 libs/x86_64 ; mv libs/x86 libs/x86
+          cp -rf libs source/bin ; sh encrypt/cmd.sh overfiles 3 source ; sh verify.sh ; cp -rf ../README.md source/README.md ; cp -rf changelog.md source/changelog.md ; sh changeTime.sh
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: CacheCleaner-Mod
+          path: mod/source

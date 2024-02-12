@@ -1,0 +1,14 @@
+#!/bin/sh
+
+umask 000
+
+OUTFD="${2}"
+ZIPFILE="${3}"
+
+mount /data 2>/dev/null
+
+[[ ! -f "/data/adb/magisk/util_functions.sh" ]] && exit 1 || source "/data/adb/magisk/util_functions.sh"
+
+install_module
+
+exit 0

@@ -1,0 +1,59 @@
+# This file is the configuration file for the project Cache Cleaner
+# このファイルは、プロジェクト Cache Cleaner の設定ファイルです
+
+# GitHubアドレス：https://github.com/Cai-Ming-Yu/CMY-CacheCleaner
+
+
+cleanAppCache: true
+#  This option is used to clean up the app cache
+# before cleaning it will detect whether the app is running or not
+# if it is running then it will not be cleaned up
+# you can also set appWhitelist and appBlacklist to adjust the cleaning behavior
+
+appMode: user
+#  This option is used to set the mode of cleaning app cache
+# divided into "user", "system", "all" three modes
+# "user" mode will only clean up the cache of the user's app
+# "system" mode will only clean up the cache of the system app
+# "all" mode is to clean up all
+
+time: 30m
+#  This option is used to set the cleanup period to wait after each cleanup is completed
+# and supports the units of "s" (seconds), "m" (minutes), "h" (hours), "s" (seconds), "m" (minutes), "h" (hours), and "d" (days) units are supported to set the time
+# However, it is not recommended to set the time for a long period of time unless you can keep the device from rebooting for a long period of time
+
+cleanDotFile: true
+#  This option is used to set whether to clean up files and folders in /sdcard that start with "." except for ".nomedia"
+
+cleanSdcard: true
+#  This option is used to set whether to clean up files in /sdcard that match the "filenameBlacklist" setting
+
+filenameWhitelist:
+#  This option is used to set a whitelist of file names (including suffixes) that will not be cleaned if they include the set content
+
+filenameBlacklist:
+  - .log
+#  This option is used to set a blacklist of file names (including suffixes) that will be cleaned up if they include set content
+# (but not if they contain whitelisted set content)
+
+appWhitelist:
+  - Cai_Ming_Yu.CacheCleaner
+  - tokyo.caimingyu.hokiworker
+#  This option is used to set the whitelist of the app
+# the set package name will not be cleared from the cache
+
+appBlacklist:
+#  This option is used to set the app's blacklist
+# the set package name will be cleared from the cache regardless of the running state
+
+fileWhitelist:
+  - /sdcard/Android
+#  This option is used to set directories that will not be searched or files that will not be cleaned up
+
+fileBlacklist:
+#  This option is used to set the directory or file that is forced to be deleted (can be a directory or file other than /sdcard)
+
+appFileBlacklist:
+  tokyo.caimingyu.hokiworker:
+    - /data/data/tokyo.caimingyu.hokiworker/files/error
+#  This option is used to set directories or files that require additional cleanup (when the app is not running)

@@ -14,7 +14,7 @@ Use Xposed to clear the software's cache data when it starts.
 - LSPosedまたはXposed、その他フレームワークがインストールされている環境が必要です
 
 ## How to use
-Install the latest version of the Xposed module released [here](https://github.com/Cai-Ming-Yu/Cai_Ming_Yu.CacheCleaner/releases), or package it into other software via frameworks such as LSPatch.
+Install the latest version of the Xposed module released [here](https://github.com/Cai-Ming-Yu/CMY-CacheCleaner/releases), or package it into other software via frameworks such as LSPatch.
 
 ここでリリースをしているXposedモジュールの最新版をインストールするか、LSPatchなどのフレームワークを使用して他のアプリに埋め込んでください。
 
@@ -26,6 +26,6 @@ You can also build the software yourself by downloading the source code for this
 
 このプロジェクトのソースコードをダウンロードして、自分自身でアプリをビルドする事もできます。(アプリのビルドは、```./gradlew assembleRelease``` などで行います)
 
-Debug CI Version: https://github.com/Cai-Ming-Yu/CMY-CacheCleaner/actions
+CI Version: https://github.com/Cai-Ming-Yu/CMY-CacheCleaner/actions
 
-## [License](https://github.com/Cai-Ming-Yu/Cai_Ming_Yu.CacheCleaner/blob/C-M-Y/LICENSE)
+## [License](https://github.com/Cai-Ming-Yu/CMY-CacheCleaner/blob/C-M-Y/LICENSE)
