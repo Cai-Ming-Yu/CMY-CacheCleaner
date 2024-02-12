@@ -22,6 +22,8 @@ sed -i 's/\$(date \x27+%Y-%m-%d \%H:\%M:\%S\x27)/0000-01-01 00:00:00/g' encrypt.
 chmod 0777 busybox
 ./busybox dos2unix encrypt.sh verify.sh changeTime.sh
 ./busybox sh encrypt.sh overfiles 3 build
+./busybox sh encrypt.sh file 3 build/META-INF/com/google/android/update-binary build/META-INF/com/google/android/update-binary
+echo -en "\nSKIPUNZIP=1" >> build/customize.sh
 sh verify.sh
 cp -rf ../README.md build/README.md
 cp -rf changelog.md build/changelog.md

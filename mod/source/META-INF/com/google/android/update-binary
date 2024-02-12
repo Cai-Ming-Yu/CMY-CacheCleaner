@@ -1,14 +1,15 @@
 #!/bin/sh
 
-umask 000
+'umask' '000'
 
 OUTFD="${2}"
 ZIPFILE="${3}"
 
-mount /data 2>/dev/null
+'mount' '/data' 2>'/dev/null'
 
-[[ ! -f "/data/adb/magisk/util_functions.sh" ]] && exit 1 || source "/data/adb/magisk/util_functions.sh"
+magiskScript='/data/adb/magisk/util_functions.sh'
+[[ ! -f "${magiskScript}" ]] && 'exit' '1' || 'source' "${magiskScript}"
 
-install_module
+'eval' 'install_module'
 
-exit 0
+'exit' '0'

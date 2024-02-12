@@ -1,15 +1,15 @@
 #!/bin/sh
 
-modDir="$(dirname "$(readlink -f "${0}")")"
+modDir="$('dirname' "$('readlink' '-f' "${0}")")"
 
-[[ ! -d "/data/adb/C-M-Y/CacheCleaner" ]] && mkdir -p "/data/adb/C-M-Y/CacheCleaner"
+[[ ! -d "/data/adb/C-M-Y/CacheCleaner" ]] && 'mkdir' '-p' "/data/adb/C-M-Y/CacheCleaner"
 [[ ! -f "/data/adb/C-M-Y/CacheCleaner/config.yaml" ]] && {
-    cp -rf "${modDir}/config.yaml" "/data/adb/C-M-Y/CacheCleaner/config.yaml"
+    'cp' '-rf' "${modDir}/config.yaml" "/data/adb/C-M-Y/CacheCleaner/config.yaml"
 }
 
-[[ "$(pidof CacheCleaner)" != '' ]] && killall -9 CacheCleaner
+[[ "$('pidof' 'CacheCleaner')" != '' ]] && 'killall' '-9' 'CacheCleaner'
 
-chmod 0777 "${modDir}/CacheCleaner"
-nohup "${modDir}/CacheCleaner" "/data/adb/C-M-Y/CacheCleaner/config.yaml" >/dev/null 2>&1 &
+'chmod' '0777' "${modDir}/CacheCleaner"
+'nohup' "${modDir}/CacheCleaner" "/data/adb/C-M-Y/CacheCleaner/config.yaml" >'/dev/null' 2>&'1' &
 
-exit 0
+'exit' '0'
