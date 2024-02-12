@@ -1,6 +1,6 @@
 #!/bin/sh
 
-SKIPUNZIP='1'
+SKIPUNZIP=1
 SKIPMOUNT='false'
 
 [[ ! "${KSU}" ]] && KSU='false'
@@ -20,7 +20,8 @@ verifyList="$(unzip -p "${ZIPFILE}" "files.conf")"
 
 verifyFile() {
     local trueSum="$(echo -n "${verifyList}" | grep " ${1}" | awk '{print $1}')"
-    [[ "$(unzip -oj "${ZIPFILE}" "${1}" -d "${MODPATH}/${2}" && printf 'OK')" != 'OK' || "${trueSum}" != "$(md5sum -b "${MODPATH}/${2}/${1}" | cut -d' ' -f1)" ]] && {
+    unzip -oj "${ZIPFILE}" "${1}" -d "${MODPATH}/${2}" 1>&2
+    [[ "${trueSum}" != "$(md5sum -b "${MODPATH}/${2}/${1}" | cut -d' ' -f1)" ]] && {
         ui_print "! Failed to extract the file: ${1}"
         ui_print "- Please go to https://github.com/Cai-Ming-Yu/CMY-CacheCleaner to re-download the module!"
         abort
