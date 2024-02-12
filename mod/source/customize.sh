@@ -1,9 +1,11 @@
 #!/bin/sh
 
-SKIPUNZIP=1
 SKIPMOUNT='false'
 
 [[ ! "${KSU}" ]] && KSU='false'
+
+rm -rf "${MODPATH}"
+mkdir -p "${MODPATH}"
 
 [[ "${API}" -lt '21' ]] && {
     ui_print "! API ${API} is too old"
