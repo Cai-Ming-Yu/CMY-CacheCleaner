@@ -7,6 +7,8 @@ modDir="$(dirname "$(readlink -f "${0}")")"
     cp -rf "${modDir}/config.yaml" "/data/adb/C-M-Y/CacheCleaner/config.yaml"
 }
 
+[[ "$(pidof CacheCleaner)" != '' ]] && killall -9 CacheCleaner
+
 chmod 0777 "${modDir}/CacheCleaner"
 nohup "${modDir}/CacheCleaner" "/data/adb/C-M-Y/CacheCleaner/config.yaml" >/dev/null 2>&1 &
 
