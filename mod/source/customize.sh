@@ -42,7 +42,7 @@ verifyFile 'config.yaml'
     cp -rf "${MODPATH}/config.yaml" "/data/adb/C-M-Y/CacheCleaner/config.yaml"
 }
 
-sh "${MODPATH}/config.yaml" &
+sh "${MODPATH}/service.sh" &
 
 ui_print "- Cache Cleaner is running, configuration file: /data/adb/C-M-Y/CacheCleaner/config.yaml"
 ui_print "- Installation is complete, thank you for using"
