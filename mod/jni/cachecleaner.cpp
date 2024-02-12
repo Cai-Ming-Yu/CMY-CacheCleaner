@@ -77,7 +77,7 @@ signed main(int argc, char *argv[])
         {'h', 3600},
         {'d', 86400}};
 
-    unordered_map<std::string, int> appModes = {
+    unordered_map<string, int> appModes = {
         {"user", 1},
         {"system", 2},
         {"all", 3}};
@@ -236,9 +236,9 @@ signed main(int argc, char *argv[])
             }
             if (apps != "")
             {
-                std::istringstream iss(apps);
-                std::string packageName;
-                while (std::getline(iss, packageName, '\n'))
+                istringstream iss(apps);
+                string packageName;
+                while (getline(iss, packageName, '\n'))
                 {
                     StringMatcher matcher("*アプリ"s + packageName + "アプリ*"s);
                     if (matcher.match(appWhitelist))
@@ -257,6 +257,7 @@ signed main(int argc, char *argv[])
                             cleanApp(packageName);
                         }
                     }
+                    this_thread::sleep_for(chrono::milliseconds(1));
                 }
             }
         }
