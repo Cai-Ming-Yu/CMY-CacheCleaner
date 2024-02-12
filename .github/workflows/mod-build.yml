@@ -31,3 +31,4 @@ jobs:
         with:
           name: CacheCleaner-Mod
           path: mod/source
+          compression-level: 9
