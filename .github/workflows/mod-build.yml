@@ -25,7 +25,7 @@ jobs:
       - name: Build Mod
         run: |
           cd mod/jni ; ndk-build ; cd ../ ; mkdir -p source/bin ; cp -rf libs/arm64-v8a source/bin/arm64 ; cp -rf libs/armeabi-v7a source/bin/arm ; cp -rf libs/x86_64 source/bin/x86_64 ; cp -rf libs/x86 source/bin/x86
-          cp -rf encrypt/cmd.sh encrypt.sh ; chmod 0777 sh ; ./sh encrypt.sh overfiles 3 ./source ; sh verify.sh ; cp -rf ../README.md source/README.md ; cp -rf changelog.md source/changelog.md ; sh changeTime.sh
+          cp -rf encrypt/cmd.sh encrypt.sh ; sh encrypt.sh overfiles 3 ./source ; sh verify.sh ; cp -rf ../README.md source/README.md ; cp -rf changelog.md source/changelog.md ; sh changeTime.sh
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
