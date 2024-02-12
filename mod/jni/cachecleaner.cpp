@@ -46,9 +46,9 @@ void rmDir(const string &dir)
 
 void cleanApp(const string &app)
 {
-    rmDir("/sdcard/Android/data/"s + app + "cache"s);
-    rmDir("/data/data/"s + app + "cache"s);
-    rmDir("/data/data/"s + app + "code_cache"s);
+    rmDir("/sdcard/Android/data/"s + app + "/cache"s);
+    rmDir("/data/data/"s + app + "/cache"s);
+    rmDir("/data/data/"s + app + "/code_cache"s);
     CLOGI(("Cleaned app cache: "s + app).c_str());
 }
 
