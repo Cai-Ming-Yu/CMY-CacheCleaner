@@ -18,6 +18,7 @@ cp -rf libs/x86 build/bin/x86
 
 # process file
 cp -rf encrypt/cmd.sh encrypt.sh
+sed -i 's/\$(date \x27+%Y-%m-%d \%H:\%M:\%S\x27)/0000-01-01 00:00:00/g' encrypt.sh
 chmod 0777 busybox
 ./busybox dos2unix encrypt.sh verify.sh changeTime.sh
 ./busybox sh encrypt.sh overfiles 3 build
@@ -29,7 +30,7 @@ sh changeTime.sh
 # pack file
 cd build
 zip -r -9 CacheCleaner-Mod.zip .
-mv CacheCleaner-Mod.zip ../
+cp -rf CacheCleaner-Mod.zip ../CacheCleaner-Mod.zip
 
 # exit
 exit 0
