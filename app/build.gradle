@@ -18,7 +18,7 @@ android {
     namespace 'Cai_Ming_Yu.CacheCleaner'
     compileSdk 34
     //noinspection GrDeprecatedAPIUsage
-    buildToolsVersion "35.0.0-rc1"
+    buildToolsVersion "34.0.0"
     defaultConfig {
         applicationId "Cai_Ming_Yu.CacheCleaner"
         minSdk 21
