@@ -28,4 +28,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: CacheCleaner-CI
+          compression-level: 9
           path: app/build/outputs/apk/release/app-release.apk
