@@ -31,6 +31,7 @@ verifyFile() {
 
 'verifyFile' 'module.prop'
 'verifyFile' 'service.sh'
+'verifyFile' 'uninstall.sh'
 'verifyFile' "bin/${ARCH}/CacheCleaner"
 'verifyFile' 'config.yaml'
 
