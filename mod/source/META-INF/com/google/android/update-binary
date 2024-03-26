@@ -8,7 +8,7 @@ ZIPFILE="${3}"
 'mount' '/data' 2>'/dev/null'
 
 magiskScript='/data/adb/magisk/util_functions.sh'
-[[ ! -f "${magiskScript}" ]] && 'exit' '1' || 'source' "${magiskScript}"
+[ ! -f "${magiskScript}" ] && 'exit' '1' || 'source' "${magiskScript}"
 
 'eval' 'install_module'
 
