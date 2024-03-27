@@ -105,6 +105,7 @@ signed main(int argc, char *argv[]) {
       "/runtimeLog.txt"s;
   Logger::Create(Logger::LogLevel::INFO, logPath);
   CLOGI(("Created log file: "s + logPath).c_str());
+  Logger::Flush();
 
   bool cleanAppCache, multiUser, cleanSdcard, cleanDotFile;
   optional<string> time, appMode, appWhitelist, appBlacklist;
@@ -242,10 +243,12 @@ signed main(int argc, char *argv[]) {
       }
 
       CLOGI("Read config finished");
+      Logger::Flush();
     } catch (const YAML::Exception &e) {
       stringstream ss;
       ss << "Error while parsing YAML: "sv << e.what();
       CLOGE(ss.str().c_str());
+      Logger::Flush();
       return -1;
     }
 
@@ -341,6 +344,7 @@ signed main(int argc, char *argv[]) {
           }
         }
       }
+      Logger::Flush();
 
       for (auto &opt : {&appMode, &appWhitelist, &appBlacklist}) {
         if (*opt) {
@@ -359,6 +363,7 @@ signed main(int argc, char *argv[]) {
           }
         }
       }
+      Logger::Flush();
 
       for (auto &opt : {&appFileBlacklist}) {
         if (*opt) {
@@ -367,12 +372,14 @@ signed main(int argc, char *argv[]) {
       }
 
       CLOGI(("Work finished, rest "s + *time).c_str());
+      Logger::Flush();
       this_thread::sleep_for(chrono::seconds(stoi(time->c_str()) *
                                              timeUnitInSeconds[time->back()]));
     } catch (const exception &e) {
       stringstream ss;
       ss << "Error while running: "sv << e.what();
       CLOGE(ss.str().c_str());
+      Logger::Flush();
       return -1;
     }
   }
