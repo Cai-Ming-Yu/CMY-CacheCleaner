@@ -108,10 +108,10 @@ signed main(int argc, char *argv[]) {
   Logger::Flush();
 
   bool cleanAppCache, multiUser, cleanSdcard, cleanDotFile;
-  optional<string> time, appMode, appWhitelist, appBlacklist;
-  optional<vector<string>> searchExt, filenameWhitelist, filenameBlacklist,
-      fileWhitelist, fileBlacklist;
-  optional<map<string, vector<string>>> appFileBlacklist;
+  string time, appMode, appWhitelist, appBlacklist;
+  vector<string> searchExt, filenameWhitelist, filenameBlacklist, fileWhitelist,
+      fileBlacklist;
+  map<string, vector<string>> appFileBlacklist;
 
   map<char, int> timeUnitInSeconds = {
       {'s', 1}, {'m', 60}, {'h', 3600}, {'d', 86400}};
@@ -121,33 +121,34 @@ signed main(int argc, char *argv[]) {
 
   for (;;) {
     cleanAppCache = multiUser = cleanSdcard = cleanDotFile = false;
-    for (auto &opt : {&time, &appMode, &appWhitelist, &appBlacklist}) {
-      if (*opt) {
-        opt->reset();
-      }
+    time = appMode = appWhitelist = appBlacklist = ""s;
+    searchExt = filenameWhitelist = filenameBlacklist = fileWhitelist =
+        fileBlacklist = {};
+    appFileBlacklist = {};
+
+    for (auto &str : {&time, &appMode, &appWhitelist, &appBlacklist}) {
+      (*str).shrink_to_fit();
     }
-    for (auto &opt : {&searchExt, &filenameWhitelist, &filenameBlacklist,
+
+    for (auto &str : {&searchExt, &filenameWhitelist, &filenameBlacklist,
                       &fileWhitelist, &fileBlacklist}) {
-      if (*opt) {
-        opt->reset();
+      for (auto &s : *str) {
+        s.shrink_to_fit();
       }
     }
-    for (auto &opt : {&appFileBlacklist}) {
-      if (*opt) {
-        opt->reset();
+
+    for (auto &pair : appFileBlacklist) {
+      for (auto &str : pair.second) {
+        str.shrink_to_fit();
       }
     }
-    *time = *appMode = *appWhitelist = *appBlacklist = ""s;
-    *searchExt = *filenameWhitelist = *filenameBlacklist = *fileWhitelist =
-        *fileBlacklist = {};
-    *appFileBlacklist = {};
 
     try {
       YAML::Node config = YAML::LoadFile(configFile);
       CLOGI(("Read config file: "s + configFile).c_str());
 
-      *time = config["time"sv].as<string>();
-      CLOGI(("config time: "s + *time).c_str());
+      time = config["time"sv].as<string>();
+      CLOGI(("config time: "s + time).c_str());
 
       cleanAppCache = config["cleanAppCache"sv].as<bool>();
       if (cleanAppCache) {
@@ -156,8 +157,8 @@ signed main(int argc, char *argv[]) {
         CLOGI("config cleanAppCache: false");
       }
 
-      *appMode = config["appMode"sv].as<string>();
-      CLOGI(("config appMode: "s + *appMode).c_str());
+      appMode = config["appMode"sv].as<string>();
+      CLOGI(("config appMode: "s + appMode).c_str());
 
       cleanAppCache = config["multiUser"sv].as<bool>();
       if (cleanAppCache) {
@@ -168,13 +169,13 @@ signed main(int argc, char *argv[]) {
 
       CLOGI("config appWhitelist:");
       for (const auto &app : config["appWhitelist"sv]) {
-        *appWhitelist += "アプリ"s + app.as<string>() + "アプリ"s;
+        appWhitelist += "アプリ"s + app.as<string>() + "アプリ"s;
         CLOGI(app.as<string>().c_str());
       }
 
       CLOGI("config appBlacklist:");
       for (const auto &app : config["appBlacklist"sv]) {
-        *appBlacklist += "アプリ"s + app.as<string>() + "アプリ"s;
+        appBlacklist += "アプリ"s + app.as<string>() + "アプリ"s;
         CLOGI(app.as<string>().c_str());
       }
 
@@ -187,11 +188,11 @@ signed main(int argc, char *argv[]) {
           const YAML::Node &pathsNode = app.second;
           if (pathsNode.IsSequence()) {
             for (const auto &path : pathsNode) {
-              (*appFileBlacklist)[packageName].push_back(path.as<string>());
+              appFileBlacklist[packageName].push_back(path.as<string>());
               CLOGI(path.as<string>().c_str());
             }
           } else {
-            (*appFileBlacklist)[packageName].push_back(pathsNode.as<string>());
+            appFileBlacklist[packageName].push_back(pathsNode.as<string>());
             CLOGI(pathsNode.as<string>().c_str());
           }
         }
@@ -199,7 +200,7 @@ signed main(int argc, char *argv[]) {
 
       cleanSdcard = config["cleanSdcard"sv].as<bool>();
       if (cleanSdcard) {
-        (*searchExt).push_back("/sdcard"s);
+        searchExt.push_back("/sdcard"s);
         CLOGI("config cleanSdcard: true");
       } else {
         CLOGI("config cleanSdcard: false");
@@ -207,7 +208,7 @@ signed main(int argc, char *argv[]) {
 
       CLOGI("config searchExt:");
       for (const auto &dir : config["searchExt"sv]) {
-        (*searchExt).push_back(dir.as<string>());
+        searchExt.push_back(dir.as<string>());
         CLOGI(dir.as<string>().c_str());
       }
 
@@ -220,25 +221,25 @@ signed main(int argc, char *argv[]) {
 
       CLOGI("config filenameWhitelist:");
       for (const auto &filename : config["filenameWhitelist"sv]) {
-        (*filenameWhitelist).push_back(filename.as<string>());
+        filenameWhitelist.push_back(filename.as<string>());
         CLOGI(filename.as<string>().c_str());
       }
 
       CLOGI("config filenameBlacklist:");
       for (const auto &filename : config["filenameBlacklist"sv]) {
-        (*filenameBlacklist).push_back(filename.as<string>());
+        filenameBlacklist.push_back(filename.as<string>());
         CLOGI(filename.as<string>().c_str());
       }
 
       CLOGI("config fileWhitelist:");
       for (const auto &file : config["fileWhitelist"sv]) {
-        (*fileWhitelist).push_back(file.as<string>());
+        fileWhitelist.push_back(file.as<string>());
         CLOGI(file.as<string>().c_str());
       }
 
       CLOGI("config fileBlacklist:");
       for (const auto &file : config["fileBlacklist"sv]) {
-        (*fileBlacklist).push_back(file.as<string>());
+        fileBlacklist.push_back(file.as<string>());
         CLOGI(file.as<string>().c_str());
       }
 
@@ -259,7 +260,7 @@ signed main(int argc, char *argv[]) {
           for (const auto &entry : fs::directory_iterator("/data/user"sv)) {
             if (entry.is_directory()) {
               string userID = entry.path().filename().string();
-              switch (appModes[*appMode]) {
+              switch (appModes[appMode]) {
               case 1:
                 CLOGI("Run cleanAppCache in user mode");
                 apps = exec("pm list packages -3 --user "s + userID +
@@ -285,9 +286,9 @@ signed main(int argc, char *argv[]) {
                 string packageName;
                 while (getline(iss, packageName, '\n')) {
                   StringMatcher matcher("*アプリ"s + packageName + "アプリ*"s);
-                  if (matcher.match(*appWhitelist)) {
+                  if (matcher.match(appWhitelist)) {
                     CLOGI(("Skip cleanup app: "s + packageName).c_str());
-                  } else if (matcher.match(*appBlacklist)) {
+                  } else if (matcher.match(appBlacklist)) {
                     CLOGI(("Force cleanup app: "s + packageName).c_str());
                     cleanApp(packageName, multiUser, userID);
                   } else {
@@ -303,7 +304,7 @@ signed main(int argc, char *argv[]) {
             }
           }
         } else {
-          switch (appModes[*appMode]) {
+          switch (appModes[appMode]) {
           case 1:
             CLOGI("Run cleanAppCache in user mode");
             apps = exec("pm list packages -3 | sed 's/package://'"sv);
@@ -328,9 +329,9 @@ signed main(int argc, char *argv[]) {
             string packageName;
             while (getline(iss, packageName, '\n')) {
               StringMatcher matcher("*アプリ"s + packageName + "アプリ*"s);
-              if (matcher.match(*appWhitelist)) {
+              if (matcher.match(appWhitelist)) {
                 CLOGI(("Skip cleanup app: "s + packageName).c_str());
-              } else if (matcher.match(*appBlacklist)) {
+              } else if (matcher.match(appBlacklist)) {
                 CLOGI(("Force cleanup app: "s + packageName).c_str());
                 cleanApp(packageName, multiUser);
               } else {
@@ -346,13 +347,11 @@ signed main(int argc, char *argv[]) {
       }
       Logger::Flush();
 
-      for (auto &opt : {&appMode, &appWhitelist, &appBlacklist}) {
-        if (*opt) {
-          opt->reset();
-        }
+      for (auto &str : {&appMode, &appWhitelist, &appBlacklist}) {
+        (*str).shrink_to_fit();
       }
 
-      for (const auto &[app, file] : *appFileBlacklist) {
+      for (const auto &[app, file] : appFileBlacklist) {
         if (all_or_eq(exec("pidof "s + app + " 2>/dev/null"s), ""s, "\n"s)) {
           for (const auto &path : file) {
             if (fs::exists(path)) {
@@ -365,16 +364,16 @@ signed main(int argc, char *argv[]) {
       }
       Logger::Flush();
 
-      for (auto &opt : {&appFileBlacklist}) {
-        if (*opt) {
-          opt->reset();
+      for (auto &pair : appFileBlacklist) {
+        for (auto &str : pair.second) {
+          str.shrink_to_fit();
         }
       }
 
-      CLOGI(("Work finished, rest "s + *time).c_str());
+      CLOGI(("Work finished, rest "s + time).c_str());
       Logger::Flush();
-      this_thread::sleep_for(chrono::seconds(stoi(time->c_str()) *
-                                             timeUnitInSeconds[time->back()]));
+      this_thread::sleep_for(
+          chrono::seconds(stoi(time.c_str()) * timeUnitInSeconds[time.back()]));
     } catch (const exception &e) {
       stringstream ss;
       ss << "Error while running: "sv << e.what();
