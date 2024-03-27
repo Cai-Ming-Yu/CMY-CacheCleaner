@@ -8,6 +8,19 @@
 #include <CuStringMatcher.h>
 #include <CuLogger.h>
 
+#define and    &&
+#define and_eq &=
+#define bitand &
+#define bitor  |
+#define compl  ~
+#define eq     ==
+#define not    !
+#define not_eq !=
+#define or     ||
+#define or_eq  |=
+#define xor    ^
+#define xor_eq ^=
+
 using namespace std;
 using namespace literals;
 using namespace CU;
@@ -236,7 +249,7 @@ signed main(int argc, char *argv[])
                 apps = "";
                 break;
             }
-            if (apps != "" && apps != "\n")
+            if (not(apps eq "" or apps eq "\n"))
             {
                 istringstream iss(apps);
                 string packageName;
@@ -254,7 +267,8 @@ signed main(int argc, char *argv[])
                     }
                     else
                     {
-                        if (exec(("pidof"s + packageName).c_str()) == "")
+                        string result = exec(("pidof "s + packageName + " 2>/dev/null"s).c_str());
+                        if (result eq "" or result eq "\n" )
                         {
                             cleanApp(packageName);
                         }
