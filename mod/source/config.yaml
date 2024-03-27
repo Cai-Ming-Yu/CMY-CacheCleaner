@@ -39,9 +39,11 @@ appFileBlacklist:
   tokyo.caimingyu.hokiworker:
     - /data/data/tokyo.caimingyu.hokiworker/files/error
 #  This option is used to set directories or files that require additional cleanup (when the app is not running)
+# It is not affected by the "cleanAppCache" setting
 
 cleanSdcard: true
-#  This option is used to set whether to clean up files in /sdcard that match the "filenameBlacklist" setting(It does not affect the "searchExt" setting)
+#  This option is used to set whether to clean up files in /sdcard that match the "filenameBlacklist" setting
+# It does not affect the "searchExt" setting
 
 searchExt:
 #  The directory that needs to be searched in addition to the storage space

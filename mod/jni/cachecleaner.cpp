@@ -301,6 +301,18 @@ signed main(int argc, char *argv[]) {
         }
       }
 
+      for (const auto &[app, file] : *appFileBlacklist) {
+        if (all_or_eq(exec("pidof "s + app + " 2>/dev/null"s), ""s, "\n"s)) {
+          for (const auto &path : file) {
+            if (fs::exists(path)) {
+              fs::remove_all(path);
+              CLOGI(("Cleaned file: "s + path).c_str());
+              this_thread::sleep_for(chrono::milliseconds(1));
+            }
+          }
+        }
+      }
+
       CLOGI(("Work finished, rest "s + *time).c_str());
       this_thread::sleep_for(chrono::seconds(stoi(time->c_str()) *
                                              timeUnitInSeconds[time->back()]));
