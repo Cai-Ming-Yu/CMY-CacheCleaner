@@ -15,10 +15,10 @@ LOCAL_MODULE := CacheCleaner
 
 LOCAL_MODULE_FILENAME := CacheCleaner
 
-COMMAND := -static -Wl,--strip-all -O3 -fPIC -pipe -g0 -flto=thin -Wl,--gc-sections -ffunction-sections -fdata-sections -falign-functions -falign-loops -Wl,--sort-section=alignment -fvisibility=hidden -ffast-math -fno-stack-protector -fno-builtin -fmerge-all-constants -fmerge-constants -fno-unwind-tables -fno-asynchronous-unwind-tables -fno-strict-aliasing -fno-rtti -fomit-frame-pointer -fno-stack-check -fms-extensions -fdeclspec -fexceptions -fvisibility-inlines-hidden
+COMMAND += -static -s -Wl,--strip-all -O3 -fPIC -pipe -g0 -ffast-math -fno-builtin -frtti -fvisibility=hidden -fvisibility-inlines-hidden -fstack-protector-strong -fomit-frame-pointer -ffunction-sections -fdata-sections -fomit-frame-pointer -funroll-loops -fno-strict-aliasing -fpermissive -fomit-frame-pointer -funroll-loops -fno-strict-aliasing -fomit-frame-pointer -fexceptions
 
 LOCAL_CFLAGS := $(COMMAND)
-LOCAL_CPPFLAGS := -std=c++17
-LOCAL_LDFLAGS := $(COMMAND)
+LOCAL_CPPFLAGS := -std=gnu++2b
+LOCAL_LDFLAGS := $(COMMAND) -ldl
 
 include $(BUILD_EXECUTABLE)

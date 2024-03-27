@@ -6,4 +6,3 @@ APP_STL := c++_static
 APP_PIE := true
 APP_CLANG_TIDY := false
 APP_DEBUG := false
-APP_STRIP_MODE := --strip-all
