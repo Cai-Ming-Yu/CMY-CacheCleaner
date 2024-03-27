@@ -3,6 +3,7 @@
 #include <iostream>
 #include <optional>
 #include <string_view>
+#include <sys/prctl.h>
 #include <thread>
 #include <unordered_map>
 
@@ -92,6 +93,9 @@ void cleanApp(string_view app, bool multiUser) {
 }
 
 signed main(int argc, char *argv[]) {
+  prctl(PR_SET_NAME, "CacheCleaner", 0, 0, 0);
+  strcpy(argv[0], "CacheCleaner");
+
   if (argc < 2) {
     cerr << "Invalid usage"sv << endl;
     return -1;
