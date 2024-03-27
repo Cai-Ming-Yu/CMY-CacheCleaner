@@ -26,6 +26,46 @@ using namespace literals;
 using namespace CU;
 namespace fs = filesystem;
 
+template<typename T>
+bool all_eq(T a, T b) {
+    return (a eq b);
+}
+
+template<typename T, typename... Args>
+bool all_eq(T a, T b, Args... args) {
+    return (a eq b) and all_eq(a, args...);
+}
+
+template<typename T>
+bool all_not_eq(T a, T b) {
+    return (a not_eq b);
+}
+
+template<typename T, typename... Args>
+bool all_not_eq(T a, T b, Args... args) {
+    return (a not_eq b) and all_not_eq(a, args...);
+}
+
+template<typename T>
+bool all_or_eq(T a, T b) {
+    return (a eq b);
+}
+
+template<typename T, typename... Args>
+bool all_or_eq(T a, T b, Args... args) {
+    return (a eq b) or all_or_eq(a, args...);
+}
+
+template<typename T>
+bool all_or_not_eq(T a, T b) {
+    return (a not_eq b);
+}
+
+template<typename T, typename... Args>
+bool all_or_not_eq(T a, T b, Args... args) {
+    return (a not_eq b) or all_or_not_eq(a, args...);
+}
+
 #define CLOGE(...) Logger::Error(__VA_ARGS__)
 #define CLOGW(...) Logger::Warn(__VA_ARGS__)
 #define CLOGI(...) Logger::Info(__VA_ARGS__)
@@ -249,7 +289,7 @@ signed main(int argc, char *argv[])
                 apps = "";
                 break;
             }
-            if (not(apps eq "" or apps eq "\n"))
+            if (all_not_eq(apps, "", "\n"))
             {
                 istringstream iss(apps);
                 string packageName;
@@ -268,7 +308,7 @@ signed main(int argc, char *argv[])
                     else
                     {
                         string result = exec(("pidof "s + packageName + " 2>/dev/null"s).c_str());
-                        if (result eq "" or result eq "\n" )
+                        if (all_or_eq(result, "", "\n"))
                         {
                             cleanApp(packageName);
                         }
