@@ -85,7 +85,7 @@ string exec(const char *cmd)
         pclose(fp);
         return stm.str();
     }
-    return "";
+    return ""s;
 }
 
 void rmDir(const string &dir)
@@ -111,7 +111,7 @@ signed main(int argc, char *argv[])
 {
     if (argc < 2)
     {
-        cerr << "Invalid usage" << endl;
+        cerr << "Invalid usage"s << endl;
         return -1;
     }
 
@@ -133,9 +133,9 @@ signed main(int argc, char *argv[])
         {'d', 86400}};
 
     unordered_map<string, int> appModes = {
-        {"user", 1},
-        {"system", 2},
-        {"all", 3}};
+        {"user"s, 1},
+        {"system"s, 2},
+        {"all"s, 3}};
 
     for (;;)
     {
@@ -256,7 +256,7 @@ signed main(int argc, char *argv[])
         catch (const YAML::Exception &e)
         {
             stringstream ss;
-            ss << "Error while parsing YAML: " << e.what();
+            ss << "Error while parsing YAML: "s << e.what();
             CLOGE(ss.str().c_str());
             return -1;
         }
@@ -286,10 +286,10 @@ signed main(int argc, char *argv[])
 
             default:
                 CLOGW("Unknown appMode, cleanAppCache will not run");
-                apps = "";
+                apps = ""s;
                 break;
             }
-            if (all_not_eq(apps, "", "\n"))
+            if (all_not_eq(apps, ""s, "\n"s))
             {
                 istringstream iss(apps);
                 string packageName;
@@ -308,7 +308,7 @@ signed main(int argc, char *argv[])
                     else
                     {
                         string result = exec(("pidof "s + packageName + " 2>/dev/null"s).c_str());
-                        if (all_or_eq(result, "", "\n"))
+                        if (all_or_eq(result, ""s, "\n"s))
                         {
                             cleanApp(packageName);
                         }
