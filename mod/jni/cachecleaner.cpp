@@ -127,18 +127,21 @@ signed main(int argc, char *argv[]) {
     appFileBlacklist = {};
 
     for (auto &str : {&time, &appMode, &appWhitelist, &appBlacklist}) {
+      (*str).clear();
       (*str).shrink_to_fit();
     }
 
     for (auto &str : {&searchExt, &filenameWhitelist, &filenameBlacklist,
                       &fileWhitelist, &fileBlacklist}) {
       for (auto &s : *str) {
+        s.clear();
         s.shrink_to_fit();
       }
     }
 
     for (auto &pair : appFileBlacklist) {
       for (auto &str : pair.second) {
+        str.clear();
         str.shrink_to_fit();
       }
     }
@@ -348,6 +351,7 @@ signed main(int argc, char *argv[]) {
       Logger::Flush();
 
       for (auto &str : {&appMode, &appWhitelist, &appBlacklist}) {
+        (*str).clear();
         (*str).shrink_to_fit();
       }
 
@@ -366,6 +370,7 @@ signed main(int argc, char *argv[]) {
 
       for (auto &pair : appFileBlacklist) {
         for (auto &str : pair.second) {
+          str.clear();
           str.shrink_to_fit();
         }
       }
