@@ -4,6 +4,11 @@
 # GitHubアドレス：https://github.com/Cai-Ming-Yu/CMY-CacheCleaner
 
 
+time: 30m
+#  This option is used to set the cleanup period to wait after each cleanup is completed
+# and supports the units of "s" (seconds), "m" (minutes), "h" (hours), "s" (seconds), "m" (minutes), "h" (hours), and "d" (days) units are supported to set the time
+# However, it is not recommended to set the time for a long period of time unless you can keep the device from rebooting for a long period of time
+
 cleanAppCache: true
 #  This option is used to clean up the app cache
 # before cleaning it will detect whether the app is running or not
@@ -20,25 +25,6 @@ appMode: user
 multiUser: true
 #  Clean up the cache of the app for each user and not just user 0
 
-time: 30m
-#  This option is used to set the cleanup period to wait after each cleanup is completed
-# and supports the units of "s" (seconds), "m" (minutes), "h" (hours), "s" (seconds), "m" (minutes), "h" (hours), and "d" (days) units are supported to set the time
-# However, it is not recommended to set the time for a long period of time unless you can keep the device from rebooting for a long period of time
-
-cleanDotFile: true
-#  This option is used to set whether to clean up files and folders in /sdcard that start with "." except for ".nomedia"
-
-cleanSdcard: true
-#  This option is used to set whether to clean up files in /sdcard that match the "filenameBlacklist" setting
-
-filenameWhitelist:
-#  This option is used to set a whitelist of file names (including suffixes) that will not be cleaned if they include the set content
-
-filenameBlacklist:
-  - .log
-#  This option is used to set a blacklist of file names (including suffixes) that will be cleaned up if they include set content
-# (but not if they contain whitelisted set content)
-
 appWhitelist:
   - Cai_Ming_Yu.CacheCleaner
   - tokyo.caimingyu.hokiworker
@@ -49,14 +35,31 @@ appBlacklist:
 #  This option is used to set the app's blacklist
 # the set package name will be cleared from the cache regardless of the running state
 
+appFileBlacklist:
+  tokyo.caimingyu.hokiworker:
+    - /data/data/tokyo.caimingyu.hokiworker/files/error
+#  This option is used to set directories or files that require additional cleanup (when the app is not running)
+
+cleanSdcard: true
+#  This option is used to set whether to clean up files in /sdcard that match the "filenameBlacklist" setting(It does not affect the "searchExt" setting)
+
+searchExt:
+#  The directory that needs to be searched in addition to the storage space
+
+cleanDotFile: true
+#  This option is used to set whether to clean up files and folders in /sdcard that start with "." except for ".nomedia"
+
+filenameWhitelist:
+#  This option is used to set a whitelist of file names (including suffixes) that will not be cleaned if they include the set content
+
+filenameBlacklist:
+  - .log
+#  This option is used to set a blacklist of file names (including suffixes) that will be cleaned up if they include set content
+# (but not if they contain whitelisted set content)
+
 fileWhitelist:
   - /sdcard/Android
 #  This option is used to set directories that will not be searched or files that will not be cleaned up
 
 fileBlacklist:
 #  This option is used to set the directory or file that is forced to be deleted (can be a directory or file other than /sdcard)
-
-appFileBlacklist:
-  tokyo.caimingyu.hokiworker:
-    - /data/data/tokyo.caimingyu.hokiworker/files/error
-#  This option is used to set directories or files that require additional cleanup (when the app is not running)

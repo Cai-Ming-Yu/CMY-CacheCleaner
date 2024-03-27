@@ -4,7 +4,7 @@
     'eval' 'abort'
 }
 
-{ [ "${BOOTMODE}" == 'true' ] && [ "$('pm' 'path' 'Cai_Ming_Yu.CacheCleaner')" == '' ] ; } && {
+{ [ "${BOOTMODE}" == 'true' ] && [ "$('pm' 'path' 'Cai_Ming_Yu.CacheCleaner')" == '' ]; } && {
     'ui_print' "! Cache Cleaner xposed version is not installed."
     'ui_print' "- Please install it for a better experience."
 }

@@ -114,10 +114,10 @@ signed main(int argc, char *argv[]) {
   Logger::Create(Logger::LogLevel::INFO, logPath);
   CLOGI(("Created log file: "s + logPath).c_str());
 
-  bool cleanAppCache, multiUser, cleanDotFile, cleanSdcard;
-  optional<string> appMode, time, appWhitelist, appBlacklist;
-  optional<vector<string>> filenameWhitelist, filenameBlacklist, fileWhitelist,
-      fileBlacklist;
+  bool cleanAppCache, multiUser, cleanSdcard, cleanDotFile;
+  optional<string> time, appMode, appWhitelist, appBlacklist;
+  optional<vector<string>> searchExt, filenameWhitelist, filenameBlacklist,
+      fileWhitelist, fileBlacklist;
   optional<map<string, vector<string>>> appFileBlacklist;
 
   map<char, int> timeUnitInSeconds = {
@@ -127,14 +127,14 @@ signed main(int argc, char *argv[]) {
       {"user"sv, 1}, {"system"sv, 2}, {"all"sv, 3}};
 
   for (;;) {
-    cleanAppCache = multiUser = cleanDotFile = cleanSdcard = false;
-    for (auto &opt : {&appMode, &time, &appWhitelist, &appBlacklist}) {
+    cleanAppCache = multiUser = cleanSdcard = cleanDotFile = false;
+    for (auto &opt : {&time, &appMode, &appWhitelist, &appBlacklist}) {
       if (*opt) {
         opt->reset();
       }
     }
-    for (auto &opt : {&filenameWhitelist, &filenameBlacklist, &fileWhitelist,
-                      &fileBlacklist}) {
+    for (auto &opt : {&searchExt, &filenameWhitelist, &filenameBlacklist,
+                      &fileWhitelist, &fileBlacklist}) {
       if (*opt) {
         opt->reset();
       }
@@ -144,14 +144,17 @@ signed main(int argc, char *argv[]) {
         opt->reset();
       }
     }
-    *appMode = *time = *appWhitelist = *appBlacklist = "";
-    *filenameWhitelist = *filenameBlacklist = *fileWhitelist =
+    *time = *appMode = *appWhitelist = *appBlacklist = "";
+    *searchExt = *filenameWhitelist = *filenameBlacklist = *fileWhitelist =
         *fileBlacklist = {};
     *appFileBlacklist = {};
 
     try {
       YAML::Node config = YAML::LoadFile(configFile);
       CLOGI(("Read config file: "s + configFile).c_str());
+
+      *time = config["time"].as<string>();
+      CLOGI(("config time: "s + *time).c_str());
 
       cleanAppCache = config["cleanAppCache"].as<bool>();
       if (cleanAppCache) {
@@ -170,35 +173,6 @@ signed main(int argc, char *argv[]) {
         CLOGI("config multiUser: false");
       }
 
-      *time = config["time"].as<string>();
-      CLOGI(("config time: "s + *time).c_str());
-
-      cleanDotFile = config["cleanDotFile"].as<bool>();
-      if (cleanDotFile) {
-        CLOGI("config cleanDotFile: true");
-      } else {
-        CLOGI("config cleanDotFile: false");
-      }
-
-      cleanSdcard = config["cleanSdcard"].as<bool>();
-      if (cleanSdcard) {
-        CLOGI("config cleanSdcard: true");
-      } else {
-        CLOGI("config cleanSdcard: false");
-      }
-
-      CLOGI("config filenameWhitelist:");
-      for (const auto &filename : config["filenameWhitelist"]) {
-        (*filenameWhitelist).push_back(filename.as<string>());
-        CLOGI(filename.as<string>().c_str());
-      }
-
-      CLOGI("config filenameBlacklist:");
-      for (const auto &filename : config["filenameBlacklist"]) {
-        (*filenameBlacklist).push_back(filename.as<string>());
-        CLOGI(filename.as<string>().c_str());
-      }
-
       CLOGI("config appWhitelist:");
       for (const auto &app : config["appWhitelist"]) {
         *appWhitelist += "アプリ"s + app.as<string>() + "アプリ"s;
@@ -209,18 +183,6 @@ signed main(int argc, char *argv[]) {
       for (const auto &app : config["appBlacklist"]) {
         *appBlacklist += "アプリ"s + app.as<string>() + "アプリ"s;
         CLOGI(app.as<string>().c_str());
-      }
-
-      CLOGI("config fileWhitelist:");
-      for (const auto &file : config["fileWhitelist"]) {
-        (*fileWhitelist).push_back(file.as<string>());
-        CLOGI(file.as<string>().c_str());
-      }
-
-      CLOGI("config fileBlacklist:");
-      for (const auto &file : config["fileBlacklist"]) {
-        (*fileBlacklist).push_back(file.as<string>());
-        CLOGI(file.as<string>().c_str());
       }
 
       CLOGI("config appFileBlacklist:");
@@ -241,6 +203,45 @@ signed main(int argc, char *argv[]) {
           }
         }
       }
+
+      cleanSdcard = config["cleanSdcard"].as<bool>();
+      if (cleanSdcard) {
+        CLOGI("config cleanSdcard: true");
+      } else {
+        CLOGI("config cleanSdcard: false");
+      }
+
+      cleanDotFile = config["cleanDotFile"].as<bool>();
+      if (cleanDotFile) {
+        CLOGI("config cleanDotFile: true");
+      } else {
+        CLOGI("config cleanDotFile: false");
+      }
+
+      CLOGI("config filenameWhitelist:");
+      for (const auto &filename : config["filenameWhitelist"]) {
+        (*filenameWhitelist).push_back(filename.as<string>());
+        CLOGI(filename.as<string>().c_str());
+      }
+
+      CLOGI("config filenameBlacklist:");
+      for (const auto &filename : config["filenameBlacklist"]) {
+        (*filenameBlacklist).push_back(filename.as<string>());
+        CLOGI(filename.as<string>().c_str());
+      }
+
+      CLOGI("config fileWhitelist:");
+      for (const auto &file : config["fileWhitelist"]) {
+        (*fileWhitelist).push_back(file.as<string>());
+        CLOGI(file.as<string>().c_str());
+      }
+
+      CLOGI("config fileBlacklist:");
+      for (const auto &file : config["fileBlacklist"]) {
+        (*fileBlacklist).push_back(file.as<string>());
+        CLOGI(file.as<string>().c_str());
+      }
+
       CLOGI("Read config finished");
     } catch (const YAML::Exception &e) {
       stringstream ss;
