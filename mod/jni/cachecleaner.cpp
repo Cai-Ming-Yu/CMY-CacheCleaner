@@ -93,13 +93,18 @@ void cleanApp(string_view app, bool multiUser) {
 }
 
 signed main(int argc, char *argv[]) {
-  prctl(PR_SET_NAME, "CacheCleaner", 0, 0, 0);
-  strcpy(argv[0], "CacheCleaner");
-
   if (argc < 2) {
-    cerr << "Invalid usage"sv << endl;
+    cout << "Invalid usage"sv << endl
+         << endl
+         << "Cache Cleaner(https://github.com/Cai-Ming-Yu/CMY-CacheCleaner)"sv
+         << endl
+         << endl
+         << "Usage: "sv << argv[0] << " [yaml config file]"sv << endl;
     return -1;
   }
+
+  prctl(PR_SET_NAME, "CacheCleaner", 0, 0, 0);
+  strcpy(argv[0], "CacheCleaner");
 
   string configFile = argv[1];
 
