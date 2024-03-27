@@ -250,7 +250,6 @@ signed main(int argc, char *argv[]) {
     }
 
     try {
-
       if (cleanAppCache) {
         string apps;
         if (multiUser) {
@@ -259,26 +258,20 @@ signed main(int argc, char *argv[]) {
               string userID = entry.path().filename().string();
               switch (appModes[*appMode]) {
               case 1:
-
                 CLOGI("Run cleanAppCache in user mode");
                 apps = exec("pm list packages -3 --user "s + userID +
                             " | sed 's/package://'"s);
                 break;
-
               case 2:
-
                 CLOGI("Run cleanAppCache in system mode");
                 apps = exec("pm list packages -s --user "s + userID +
                             " | sed 's/package://' | grep -v '^android$'"s);
                 break;
-
               case 3:
-
                 CLOGI("Run cleanAppCache in all mode");
                 apps = exec("pm list packages --user "s + userID +
                             " | sed 's/package://' | grep -v '^android$'"s);
                 break;
-
               default:
                 CLOGW("Unknown appMode, cleanAppCache will not run");
                 apps = ""s;
@@ -309,25 +302,19 @@ signed main(int argc, char *argv[]) {
         } else {
           switch (appModes[*appMode]) {
           case 1:
-
             CLOGI("Run cleanAppCache in user mode");
             apps = exec("pm list packages -3 | sed 's/package://'"sv);
             break;
-
           case 2:
-
             CLOGI("Run cleanAppCache in system mode");
             apps = exec(
                 "pm list packages -s | sed 's/package://' | grep -v '^android$'"sv);
             break;
-
           case 3:
-
             CLOGI("Run cleanAppCache in all mode");
             apps = exec(
                 "pm list packages | sed 's/package://' | grep -v '^android$'"sv);
             break;
-
           default:
             CLOGW("Unknown appMode, cleanAppCache will not run");
             apps = ""s;
