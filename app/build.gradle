@@ -52,7 +52,7 @@ BlackObfuscator {
 }
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar", "*.aar"])
-    implementation 'androidx.annotation:annotation:1.7.1'
+    implementation 'androidx.annotation:annotation:1.8.0-alpha02'
     compileOnly 'de.robv.android.xposed:api:82'
     implementation 'com.highcapable.yukihookapi:api:1.2.0'
     ksp 'com.highcapable.yukihookapi:ksp-xposed:1.2.0'

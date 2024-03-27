@@ -18,6 +18,10 @@ using namespace literals;
 using namespace CU;
 namespace fs = filesystem;
 
+template <typename T> bool eq_and_not_eq(T a, T b, T c) {
+  return (a eq b) and (a not_eq c);
+}
+
 template <typename T> bool all_eq(T a, T b) { return (a eq b); }
 
 template <typename T, typename... Args> bool all_eq(T a, T b, Args... args) {
@@ -82,6 +86,56 @@ void cleanApp(const string &app, bool multiUser, const string &userID = "0"s) {
     rmDir("/data/data/"s + app + "/code_cache"s);
   }
   CLOGI(("Cleaned app cache: "s + app).c_str());
+}
+
+void cleanDir(string_view dir, bool &cleanDotFile,
+              vector<string> &fileWhitelist, vector<string> &filenameWhitelist,
+              vector<string> &filenameBlacklist) {
+  this_thread::sleep_for(chrono::milliseconds(1));
+  for (const auto &entry : fs::directory_iterator(dir)) {
+    bool skip = false;
+    for (const string &whitelistFile : fileWhitelist) {
+      fs::path parentPath = fs::canonical(fs::path(whitelistFile));
+      fs::path filePath = fs::canonical(fs::path(dir));
+      if (parentPath == filePath ||
+          mismatch(parentPath.begin(), parentPath.end(), filePath.begin())
+                  .first == parentPath.end()) {
+        CLOGI(("Skip clean file: "s + entry.path().string()).c_str());
+        skip = true;
+      }
+    }
+    if (not skip) {
+      for (const string &whitelistFilename : filenameWhitelist) {
+        if (entry.path().filename().string().find(whitelistFilename) not_eq
+            string::npos) {
+          CLOGI(("Skip clean file: "s + entry.path().string()).c_str());
+          skip = true;
+        }
+      }
+      if (not skip) {
+        if (cleanDotFile and fs::exists(entry.path().string()) and
+            string_view(entry.path().filename().string().data(), 1) eq "."sv and
+            string_view(entry.path().filename().string()) not_eq ".nomedia"sv) {
+          fs::remove_all(entry.path().string());
+          CLOGI(("Cleaned file: "s + entry.path().string()).c_str());
+          continue;
+        }
+        for (const string &blacklistFilename : filenameBlacklist) {
+          if (fs::exists(entry.path().string()) and
+              entry.path().filename().string().find(blacklistFilename) not_eq
+                  string::npos) {
+            fs::remove_all(entry.path().string());
+            CLOGI(("Cleaned file: "s + entry.path().string()).c_str());
+            break;
+          }
+        }
+        if (fs::exists(entry.path().string()) and fs::is_directory(entry)) {
+          cleanDir(entry.path().string(), cleanDotFile, fileWhitelist,
+                   filenameWhitelist, filenameBlacklist);
+        }
+      }
+    }
+  }
 }
 
 signed main(int argc, char *argv[]) {
@@ -372,6 +426,49 @@ signed main(int argc, char *argv[]) {
         for (auto &str : pair.second) {
           str.clear();
           str.shrink_to_fit();
+        }
+      }
+
+      for (const string &dir : searchExt) {
+        bool skip = false;
+        for (const string &whitelistFile : fileWhitelist) {
+          fs::path parentPath = fs::canonical(fs::path(whitelistFile));
+          fs::path filePath = fs::canonical(fs::path(dir));
+          if (parentPath == filePath ||
+              mismatch(parentPath.begin(), parentPath.end(), filePath.begin())
+                      .first == parentPath.end()) {
+            CLOGI(("Skip clean file: "s + dir).c_str());
+            skip = true;
+          }
+        }
+        if (not skip) {
+          cleanDir(dir, cleanDotFile, fileWhitelist, filenameWhitelist,
+                   filenameBlacklist);
+        }
+        this_thread::sleep_for(chrono::milliseconds(1));
+      }
+      Logger::Flush();
+
+      for (auto &str : {&searchExt, &filenameWhitelist, &filenameBlacklist,
+                        &fileWhitelist}) {
+        for (auto &s : *str) {
+          s.clear();
+          s.shrink_to_fit();
+        }
+      }
+
+      for (const string &file : fileBlacklist) {
+        if (fs::exists(file)) {
+          fs::remove_all(file);
+          CLOGI(("Cleaned file: "s + file).c_str());
+          this_thread::sleep_for(chrono::milliseconds(1));
+        }
+      }
+
+      for (auto &str : {&fileBlacklist}) {
+        for (auto &s : *str) {
+          s.clear();
+          s.shrink_to_fit();
         }
       }
 

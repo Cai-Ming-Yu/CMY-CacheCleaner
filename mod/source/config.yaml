@@ -51,6 +51,7 @@ searchExt:
 
 cleanDotFile: true
 #  This option is used to set whether to clean up files and folders in /sdcard that start with "." except for ".nomedia"
+# It is affected by the "searchExt" setting
 
 filenameWhitelist:
 #  This option is used to set a whitelist of file names (including suffixes) that will not be cleaned if they include the set content
