@@ -24,6 +24,7 @@ appMode: user
 
 multiUser: true
 #  Clean up the cache of the app for each user and not just user 0
+# It affects the "cleanSdcard" setting
 
 appWhitelist:
   - Cai_Ming_Yu.CacheCleaner

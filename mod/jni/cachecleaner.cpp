@@ -71,25 +71,17 @@ void rmDir(string_view dir) {
   }
 }
 
-void cleanApp(string_view app, bool multiUser) {
+void cleanApp(const string &app, bool multiUser, const string &userID = "0"s) {
   if (multiUser) {
-    for (const auto &entry : fs::directory_iterator("/storage/emulated"sv)) {
-      if (entry.is_directory()) {
-        rmDir(entry.path().string() + "/"s + string(app) + "/cache"s);
-      }
-    }
-    for (const auto &entry : fs::directory_iterator("/data/user"sv)) {
-      if (entry.is_directory()) {
-        rmDir(entry.path().string() + "/"s + string(app) + "/cache"s);
-        rmDir(entry.path().string() + "/"s + string(app) + "/code_cache"s);
-      }
-    }
+    rmDir("/storage/emulated/"s + userID + "/Android/data/"s + app + "/cache"s);
+    rmDir("/data/user/"s + userID + "/"s + app + "/cache"s);
+    rmDir("/data/user/"s + userID + "/"s + app + "/code_cache"s);
   } else {
-    rmDir("/sdcard/Android/data/"s + string(app) + "/cache"s);
-    rmDir("/data/data/"s + string(app) + "/cache"s);
-    rmDir("/data/data/"s + string(app) + "/code_cache"s);
+    rmDir("/sdcard/Android/data/"s + app + "/cache"s);
+    rmDir("/data/data/"s + app + "/cache"s);
+    rmDir("/data/data/"s + app + "/code_cache"s);
   }
-  CLOGI(("Cleaned app cache: "s + string(app)).c_str());
+  CLOGI(("Cleaned app cache: "s + app).c_str());
 }
 
 signed main(int argc, char *argv[]) {
@@ -144,7 +136,7 @@ signed main(int argc, char *argv[]) {
         opt->reset();
       }
     }
-    *time = *appMode = *appWhitelist = *appBlacklist = "";
+    *time = *appMode = *appWhitelist = *appBlacklist = ""s;
     *searchExt = *filenameWhitelist = *filenameBlacklist = *fileWhitelist =
         *fileBlacklist = {};
     *appFileBlacklist = {};
@@ -153,20 +145,20 @@ signed main(int argc, char *argv[]) {
       YAML::Node config = YAML::LoadFile(configFile);
       CLOGI(("Read config file: "s + configFile).c_str());
 
-      *time = config["time"].as<string>();
+      *time = config["time"sv].as<string>();
       CLOGI(("config time: "s + *time).c_str());
 
-      cleanAppCache = config["cleanAppCache"].as<bool>();
+      cleanAppCache = config["cleanAppCache"sv].as<bool>();
       if (cleanAppCache) {
         CLOGI("config cleanAppCache: true");
       } else {
         CLOGI("config cleanAppCache: false");
       }
 
-      *appMode = config["appMode"].as<string>();
+      *appMode = config["appMode"sv].as<string>();
       CLOGI(("config appMode: "s + *appMode).c_str());
 
-      cleanAppCache = config["multiUser"].as<bool>();
+      cleanAppCache = config["multiUser"sv].as<bool>();
       if (cleanAppCache) {
         CLOGI("config multiUser: true");
       } else {
@@ -174,19 +166,19 @@ signed main(int argc, char *argv[]) {
       }
 
       CLOGI("config appWhitelist:");
-      for (const auto &app : config["appWhitelist"]) {
+      for (const auto &app : config["appWhitelist"sv]) {
         *appWhitelist += "アプリ"s + app.as<string>() + "アプリ"s;
         CLOGI(app.as<string>().c_str());
       }
 
       CLOGI("config appBlacklist:");
-      for (const auto &app : config["appBlacklist"]) {
+      for (const auto &app : config["appBlacklist"sv]) {
         *appBlacklist += "アプリ"s + app.as<string>() + "アプリ"s;
         CLOGI(app.as<string>().c_str());
       }
 
       CLOGI("config appFileBlacklist:");
-      const YAML::Node &appFileBlacklistNode = config["appFileBlacklist"];
+      const YAML::Node &appFileBlacklistNode = config["appFileBlacklist"sv];
       if (appFileBlacklistNode.IsDefined() && appFileBlacklistNode.IsMap()) {
         for (const auto &app : appFileBlacklistNode) {
           string packageName = app.first.as<string>();
@@ -204,14 +196,21 @@ signed main(int argc, char *argv[]) {
         }
       }
 
-      cleanSdcard = config["cleanSdcard"].as<bool>();
+      cleanSdcard = config["cleanSdcard"sv].as<bool>();
       if (cleanSdcard) {
+        (*searchExt).push_back("/sdcard"s);
         CLOGI("config cleanSdcard: true");
       } else {
         CLOGI("config cleanSdcard: false");
       }
 
-      cleanDotFile = config["cleanDotFile"].as<bool>();
+      CLOGI("config searchExt:");
+      for (const auto &dir : config["searchExt"sv]) {
+        (*searchExt).push_back(dir.as<string>());
+        CLOGI(dir.as<string>().c_str());
+      }
+
+      cleanDotFile = config["cleanDotFile"sv].as<bool>();
       if (cleanDotFile) {
         CLOGI("config cleanDotFile: true");
       } else {
@@ -219,25 +218,25 @@ signed main(int argc, char *argv[]) {
       }
 
       CLOGI("config filenameWhitelist:");
-      for (const auto &filename : config["filenameWhitelist"]) {
+      for (const auto &filename : config["filenameWhitelist"sv]) {
         (*filenameWhitelist).push_back(filename.as<string>());
         CLOGI(filename.as<string>().c_str());
       }
 
       CLOGI("config filenameBlacklist:");
-      for (const auto &filename : config["filenameBlacklist"]) {
+      for (const auto &filename : config["filenameBlacklist"sv]) {
         (*filenameBlacklist).push_back(filename.as<string>());
         CLOGI(filename.as<string>().c_str());
       }
 
       CLOGI("config fileWhitelist:");
-      for (const auto &file : config["fileWhitelist"]) {
+      for (const auto &file : config["fileWhitelist"sv]) {
         (*fileWhitelist).push_back(file.as<string>());
         CLOGI(file.as<string>().c_str());
       }
 
       CLOGI("config fileBlacklist:");
-      for (const auto &file : config["fileBlacklist"]) {
+      for (const auto &file : config["fileBlacklist"sv]) {
         (*fileBlacklist).push_back(file.as<string>());
         CLOGI(file.as<string>().c_str());
       }
@@ -254,50 +253,111 @@ signed main(int argc, char *argv[]) {
 
       if (cleanAppCache) {
         string apps;
-        switch (appModes[*appMode]) {
-        case 1:
+        if (multiUser) {
+          for (const auto &entry : fs::directory_iterator("/data/user"sv)) {
+            if (entry.is_directory()) {
+              string userID = entry.path().filename().string();
+              switch (appModes[*appMode]) {
+              case 1:
 
-          CLOGI("Run cleanAppCache in user mode");
-          apps = exec("pm list packages -3 | sed 's/package://'"sv);
-          break;
+                CLOGI("Run cleanAppCache in user mode");
+                apps = exec("pm list packages -3 --user "s + userID +
+                            " | sed 's/package://'"s);
+                break;
 
-        case 2:
+              case 2:
 
-          CLOGI("Run cleanAppCache in system mode");
-          apps = exec(
-              "pm list packages -s | sed 's/package://' | grep -v '^android$'"sv);
-          break;
+                CLOGI("Run cleanAppCache in system mode");
+                apps = exec("pm list packages -s --user "s + userID +
+                            " | sed 's/package://' | grep -v '^android$'"s);
+                break;
 
-        case 3:
+              case 3:
 
-          CLOGI("Run cleanAppCache in all mode");
-          apps = exec(
-              "pm list packages | sed 's/package://' | grep -v '^android$'"sv);
-          break;
+                CLOGI("Run cleanAppCache in all mode");
+                apps = exec("pm list packages --user "s + userID +
+                            " | sed 's/package://' | grep -v '^android$'"s);
+                break;
 
-        default:
-          CLOGW("Unknown appMode, cleanAppCache will not run");
-          apps = ""s;
-          break;
-        }
-        if (all_not_eq(apps, ""s, "\n"s)) {
-          istringstream iss(apps);
-          string packageName;
-          while (getline(iss, packageName, '\n')) {
-            StringMatcher matcher("*アプリ"s + packageName + "アプリ*"s);
-            if (matcher.match(*appWhitelist)) {
-              CLOGI(("Skip cleanup app: "s + packageName).c_str());
-            } else if (matcher.match(*appBlacklist)) {
-              CLOGI(("Force cleanup app: "s + packageName).c_str());
-              cleanApp(packageName, multiUser);
-            } else {
-              if (all_or_eq(exec("pidof "s + packageName + " 2>/dev/null"s),
+              default:
+                CLOGW("Unknown appMode, cleanAppCache will not run");
+                apps = ""s;
+                break;
+              }
+              if (all_not_eq(apps, ""s, "\n"s)) {
+                istringstream iss(apps);
+                string packageName;
+                while (getline(iss, packageName, '\n')) {
+                  StringMatcher matcher("*アプリ"s + packageName + "アプリ*"s);
+                  if (matcher.match(*appWhitelist)) {
+                    CLOGI(("Skip cleanup app: "s + packageName).c_str());
+                  } else if (matcher.match(*appBlacklist)) {
+                    CLOGI(("Force cleanup app: "s + packageName).c_str());
+                    cleanApp(packageName, multiUser, userID);
+                  } else {
+                    if (all_or_eq(
+                            exec("pidof "s + packageName + " 2>/dev/null"s),
                             ""s, "\n"s)) {
-                cleanApp(packageName, multiUser);
+                      cleanApp(packageName, multiUser, userID);
+                    }
+                  }
+                  this_thread::sleep_for(chrono::milliseconds(1));
+                }
               }
             }
-            this_thread::sleep_for(chrono::milliseconds(1));
           }
+        } else {
+          switch (appModes[*appMode]) {
+          case 1:
+
+            CLOGI("Run cleanAppCache in user mode");
+            apps = exec("pm list packages -3 | sed 's/package://'"sv);
+            break;
+
+          case 2:
+
+            CLOGI("Run cleanAppCache in system mode");
+            apps = exec(
+                "pm list packages -s | sed 's/package://' | grep -v '^android$'"sv);
+            break;
+
+          case 3:
+
+            CLOGI("Run cleanAppCache in all mode");
+            apps = exec(
+                "pm list packages | sed 's/package://' | grep -v '^android$'"sv);
+            break;
+
+          default:
+            CLOGW("Unknown appMode, cleanAppCache will not run");
+            apps = ""s;
+            break;
+          }
+          if (all_not_eq(apps, ""s, "\n"s)) {
+            istringstream iss(apps);
+            string packageName;
+            while (getline(iss, packageName, '\n')) {
+              StringMatcher matcher("*アプリ"s + packageName + "アプリ*"s);
+              if (matcher.match(*appWhitelist)) {
+                CLOGI(("Skip cleanup app: "s + packageName).c_str());
+              } else if (matcher.match(*appBlacklist)) {
+                CLOGI(("Force cleanup app: "s + packageName).c_str());
+                cleanApp(packageName, multiUser);
+              } else {
+                if (all_or_eq(exec("pidof "s + packageName + " 2>/dev/null"s),
+                              ""s, "\n"s)) {
+                  cleanApp(packageName, multiUser);
+                }
+              }
+              this_thread::sleep_for(chrono::milliseconds(1));
+            }
+          }
+        }
+      }
+
+      for (auto &opt : {&appMode, &appWhitelist, &appBlacklist}) {
+        if (*opt) {
+          opt->reset();
         }
       }
 
@@ -310,6 +370,12 @@ signed main(int argc, char *argv[]) {
               this_thread::sleep_for(chrono::milliseconds(1));
             }
           }
+        }
+      }
+
+      for (auto &opt : {&appFileBlacklist}) {
+        if (*opt) {
+          opt->reset();
         }
       }
 
